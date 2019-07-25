@@ -21,14 +21,15 @@ const modifiers = {
    * @param {number} value
    */
   throttle(value) {
-    return (value - 14) / (78 - 14)
+    const offset = Math.max(value - 14, 0)
+    return offset === 0 ? 0 : offset / (78 - 14)
   },
   /**
    * Make the RPM into a percentage
    * @param {number} value
    */
   rpm(value) {
-    return value / 6500
+    return value === 0 ? 0 : value / 6500
   },
 }
 
