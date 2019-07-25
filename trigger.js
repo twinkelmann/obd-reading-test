@@ -95,7 +95,8 @@ function compute(values, deltas) {
     speedDelta >= 15, // suddenly 15kmh faster
 
     /* deceleration rules */
-    speedDelta <= -15, // suddenly 15kmh slower
+    speedDelta <= -20, // suddenly 20kmh slower (very hard braking)
+    speedDelta <= -10 && speed >= 70, // suddenly 10kmh slower at high speed
   ]
 
   /**
