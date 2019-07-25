@@ -116,6 +116,7 @@ OBD.init(connectorFn).then(
       timeout,
       compute
     )
+    console.log('ready')
   },
   error => console.error('Could not initialize OBD connection:', error)
 )

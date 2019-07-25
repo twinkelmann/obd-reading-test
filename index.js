@@ -3,15 +3,16 @@ const { exec } = require('child_process')
 
 const eurobeat =
   process.env.HOME + '/Dropbox/Deja\\ Vu\\ -\\ Perfect\\ Loop.wav'
-const command = `mplayer -loop 0 ${eurobeat}`
+const command = `mplayer -loop 0 -msglevel all=-1 ${eurobeat}`
 
 /**
  * How much time after an "off" signal is given should the mode stop
  */
-const fallof = 3000
+const fallof = 5000
 
 let mode = false
 let fallofStart = null
+let audio = null
 
 trigger.on('update', newMode => {
   // mode changed to on
@@ -26,7 +27,7 @@ trigger.on('update', newMode => {
   }
 
   // mode changed to off
-  if (!newMode && mode) {
+  if (!newMode && audio) {
     const now = Date.now()
     if (fallofStart) {
       // check the fallof
@@ -36,6 +37,7 @@ trigger.on('update', newMode => {
 
         if (audio) {
           // TODO: implement volume fallof
+          audio.stdin.write('q\n')
           audio.kill()
           audio = null
         }
