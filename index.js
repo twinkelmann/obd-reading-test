@@ -1,6 +1,9 @@
 const trigger = require('./trigger')
 const { exec } = require('child_process')
 
+// TODO: list songs with a drop timestamp (from a JSON file)
+// and start a random song at the timestamp with mplayer.
+// if song reaches the end, play another random one from the beginning
 const eurobeat =
   process.env.HOME + '/Dropbox/Deja\\ Vu\\ -\\ Perfect\\ Loop.wav'
 const command = `mplayer -loop 0 -msglevel all=-1 ${eurobeat}`
