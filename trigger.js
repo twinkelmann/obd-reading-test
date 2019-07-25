@@ -80,6 +80,8 @@ function compute(values, deltas) {
   // no-go
   const noGo = speed < 5
 
+  // TODO: remove log
+
   console.clear()
   console.log(new Date().toLocaleTimeString())
   console.log(
