@@ -120,6 +120,7 @@ function compute(values, deltas) {
     'delta',
     JSON.stringify(deltas, null, 2)
   )
+  console.log('result:', result)
 
   reporter.emit('update', result)
 }
