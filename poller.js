@@ -6,6 +6,7 @@
  * @param {number} pollerInterval
  * @param {number} computeInterval
  * @param {number} deltaInterval
+ * @param {number} timeout
  * @param {(values: {[x:string]: number}) => void} compute
  */
 function start(
@@ -15,12 +16,25 @@ function start(
   pollerInterval,
   computeInterval,
   deltaInterval,
+  timeout,
   compute
 ) {
   const currentValues = {}
   const deltas = {}
 
+  /**
+   * Reset all values to zero. usefull when the timeout occures
+   */
+  const zeroOut = () => {
+    for (const pid in pids) {
+      currentValues[pid] = 0
+      deltas[pid] = 0
+    }
+  }
+
   const pollers = {}
+
+  let timeoutRef = null
 
   // build all the pollers
   for (const pid in pids) {
@@ -41,11 +55,14 @@ function start(
     const history = []
 
     poller.on('data', output => {
+      clearTimeout(timeoutRef)
+      timeoutRef = setTimeout(zeroOut, timeout)
+
       /**
        * @type number
        */
       const raw = output.value || 0
-      const value = modifier ? modifier(raw) : raw
+      const value = parseFloat((modifier ? modifier(raw) : raw).toFixed(4))
 
       // store value
       currentValues[pid] = value
@@ -66,7 +83,7 @@ function start(
       }
 
       // store delta
-      deltas[pid] = value - history[0]
+      deltas[pid] = parseFloat((value - history[0]).toFixed(4))
     })
 
     poller.startPolling()

@@ -40,12 +40,16 @@ const pollerInterval = 100
 /**
  * How often to compute the logic based on the current values
  */
-const computeInterval = 200
+const computeInterval = 150
 /**
  * How many readouts to skip before calculating the delta
  * Will afect the responsivness of the computation
  */
 const deltaInterval = 3
+/**
+ * How much time before the values are reset to avoid being stuck if no new values come in
+ */
+const timeout = 3 * pollerInterval
 
 const reporter = new EventEmitter()
 
@@ -71,7 +75,10 @@ function compute(values, deltas) {
   const rpmDelta = deltas['rpm']
   const throttleDelta = deltas['throttle']
 
-  const relative = throttleDelta >= 0.4 || rpmDelta >= 0.3 /* 2000 RPM */
+  const relative = throttleDelta >= 0.3 || rpmDelta >= 0.3 /* 2000 RPM */
+
+  // no-go
+  const noGo = speed < 5
 
   console.clear()
   console.log(new Date().toLocaleTimeString())
@@ -82,7 +89,7 @@ function compute(values, deltas) {
     JSON.stringify(deltas, null, 2)
   )
 
-  reporter.emit('update', instant || relative)
+  reporter.emit('update', (instant || relative) && !noGo)
 }
 
 OBD.init(connectorFn).then(
@@ -103,6 +110,7 @@ OBD.init(connectorFn).then(
       pollerInterval,
       computeInterval,
       deltaInterval,
+      timeout,
       compute
     )
   },
