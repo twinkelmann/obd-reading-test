@@ -8,7 +8,7 @@ const command = `mplayer -loop 0 -msglevel all=-1 ${eurobeat}`
 /**
  * How much time after an "off" signal is given should the mode stop
  */
-const fallof = 5000
+const fallof = 10 * 1000
 
 let mode = false
 let fallofStart = null
