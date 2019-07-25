@@ -70,6 +70,8 @@ function compute(values, deltas) {
   const rpmDelta = deltas['rpm']
   const throttleDelta = deltas['throttle']
 
+  // TODO: move rules to external file ?
+
   /**
    * List of all positive rules
    * If any of the following is true, the result is true
