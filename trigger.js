@@ -106,8 +106,10 @@ function compute(values, deltas) {
     speed < 5, // going very slow
   ]
 
+  // if the positive are NOT all FALSE
+  // and the negatives are all NOT TRUE
   const result =
-    positiveRules.every(rule => rule) && negativeRules.every(rule => !rule)
+    !positiveRules.every(rule => !rule) && negativeRules.every(rule => !rule)
 
   // TODO: remove log
   // console.clear()
