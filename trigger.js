@@ -65,25 +65,52 @@ function compute(values, deltas) {
   const rpm = values['rpm']
   const throttle = values['throttle']
 
-  const instant =
-    throttle >= 0.95 ||
-    (throttle >= 0.7 && rpm >= 0.61) /* 4000 RPM */ ||
-    rpm >= 0.8 /* 5200 RPM */ ||
-    speed >= 130
-
   // relative calculations
   const speedDelta = deltas['speed']
   const rpmDelta = deltas['rpm']
   const throttleDelta = deltas['throttle']
 
-  const relative = throttleDelta >= 0.3 || rpmDelta >= 0.3 /* 2000 RPM */
+  /**
+   * List of all positive rules
+   * If any of the following is true, the result is true
+   * Unless a negative rule is true (see below)
+   */
+  const positiveRules = [
+    /* crazy rules */
+    throttle >= 0.97, // going full throttle
+    rpm >= 0.82, // more than 5300 RPM
+    speed >= 130, // You're breaking the law !
+    /* speedDelta <= -30, // TODO: #RageYourDream */
 
-  // no-go
-  const noGo = speed < 5
+    /* crusing rules */
+    throttle >= 0.15 && rpm >= 0.6 && speed >= 60, // more than 4000 RPM from 60kmh with the foot down somewhat
+    throttle >= 0.25 && rpm >= 0.55 && speed >= 60, // more than 3500 RPM from 60kmh with the foot quite far down
+    throttle >= 0.1 && rpm >= 0.55 && speed >= 80, // more than 3500 RPM from 80kmh with the foot not so much down
+    throttle >= 0.08 && rpm >= 0.6 && speed >= 80, // more than 4000 RPM from 80kmh with the foot even less down
+    rpm >= 0.65 && speed >= 100, // more than 4200 RPM from 100kmh without the foot down
+
+    /* acceleration rules */
+    throttleDelta >= 0.4, // suddenly hard on the throttle
+    rpmDelta >= 0.3, // suddenly more than 2000 extra RPM
+    speedDelta >= 15, // suddenly 15kmh faster
+
+    /* deceleration rules */
+    speedDelta <= -15, // suddenly 15kmh slower
+  ]
+
+  /**
+   * List of all negative rules
+   * If any of the following is true, the result is false
+   */
+  const negativeRules = [
+    speed < 5, // going very slow
+  ]
+
+  const result =
+    positiveRules.every(rule => rule) && negativeRules.every(rule => !rule)
 
   // TODO: remove log
-
-  console.clear()
+  // console.clear()
   console.log(new Date().toLocaleTimeString())
   console.log(
     'current',
@@ -92,7 +119,7 @@ function compute(values, deltas) {
     JSON.stringify(deltas, null, 2)
   )
 
-  reporter.emit('update', (instant || relative) && !noGo)
+  reporter.emit('update', result)
 }
 
 OBD.init(connectorFn).then(
