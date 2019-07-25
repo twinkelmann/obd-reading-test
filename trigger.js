@@ -73,7 +73,14 @@ function compute(values, deltas) {
 
   const relative = throttleDelta >= 0.4 || rpmDelta >= 0.3 /* 2000 RPM */
 
-  console.log(JSON.stringify(values, null, 2), JSON.stringify(deltas, null, 2))
+  console.clear()
+  console.log(new Date().toLocaleTimeString())
+  console.log(
+    'current',
+    JSON.stringify(values, null, 2),
+    'delta',
+    JSON.stringify(deltas, null, 2)
+  )
 
   reporter.emit('update', instant || relative)
 }

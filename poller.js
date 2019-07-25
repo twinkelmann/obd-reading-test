@@ -24,6 +24,10 @@ function start(
 
   // build all the pollers
   for (const pid in pids) {
+    // make sure no values are undefined
+    currentValues[pid] = 0
+    deltas[pid] = 0
+
     const poller = new OBD.ECUPoller({
       pid: pids[pid],
       interval: pollerInterval,
@@ -71,7 +75,7 @@ function start(
   }
 
   setInterval(() => {
-    compute(currentValues)
+    compute(currentValues, deltas)
   }, computeInterval)
 
   return pollers
