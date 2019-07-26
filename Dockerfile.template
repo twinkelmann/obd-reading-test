@@ -1,0 +1,22 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-node:10-stretch-run
+
+# use `install_packages` if you need to install dependencies,
+RUN install_packages git mplayer python build-essential
+
+# Enable udevd so that plugged dynamic hardware devices show up in our container.
+ENV UDEV=1
+
+# Enable access to the USB Drive
+# ENV INITSYSTEM on
+# COPY mnt-storage.mount /etc/systemd/system/
+# RUN systemctl enable mnt-storage.mount
+
+# Install NodeJS App
+
+WORKDIR /usr/src/app
+COPY package.json package.json
+RUN JOBS=MAX npm install --production --unsafe-perm && npm cache verify && rm -rf /tmp/*
+COPY . ./
+
+# Run !
+CMD ["npm", "start"]

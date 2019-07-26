@@ -2,8 +2,9 @@ const OBD = require('obd-parser')
 const poller = require('./poller')
 const { EventEmitter } = require('events')
 
-const getConnector = require('../obd-parser-serial-connection')
+const getConnector = require('obd-parser-serial-connection')
 
+// TODO: auto-reopen connection when it closes
 const connectorFn = getConnector({
   serialPath: '/dev/ttyUSB0',
 

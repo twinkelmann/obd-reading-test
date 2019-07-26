@@ -1,0 +1,11 @@
+[Unit]
+Description = External USB Drive
+
+[Mount]
+What = LABEL=myusbdrive
+Where = /mnt/storage
+Type = fat
+Options = rw,relatime,data=ordered
+
+[Install]
+WantedBy = multi-user.target
